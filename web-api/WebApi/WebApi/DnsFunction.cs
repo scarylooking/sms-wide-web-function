@@ -21,7 +21,7 @@ namespace WebApi
             // 1. Instantiate dependencies
             var clockworkApi = new ClockworkApi();
             var dnsRepository = new DomainRepository();
-            
+
             // 2. Get the request model
             var clockworkHook = ClockworkHookRequest.FromQueryString(req.Query);
 
@@ -29,19 +29,35 @@ namespace WebApi
             // The DNS lookup path is in the clockworkHook message
             var dnsRequest = DnsRequest.FromContent(clockworkHook.Content);
 
-            // 4. Handle the request
-            if (dnsRequest.RequestType == DnsRequestType.Register)
+            try
             {
-                // 3.1 If this is a registration, register the payload against the from number
-                // await dnsRepository.Register(clockworkHook.From, dnsRequest.Payload);
-            }
-            else
-            {
-                if (dnsRequest?.Payload == "info.cern.ch")
+                // 4. Handle the request
+                if (dnsRequest.RequestType == DnsRequestType.Register)
                 {
-                    // 3.2 Send a text to the From address with the result
-                    
+                    // 4.1 If this is a registration, register the payload against the from number
+                    await dnsRepository.Register(dnsRequest.Payload, clockworkHook.From);
+
+                    await clockworkApi.SendMessage(clockworkHook.From, "201");
                 }
+                else
+                {
+                    // 4.2 If this is a lookup, return the number
+                    var result = await dnsRepository.Resolve(dnsRequest.Payload);
+
+                    if (result == null)
+                    {
+                        await clockworkApi.SendMessage(clockworkHook.From, $"404");
+                    }
+                    else
+                    {
+                        await clockworkApi.SendMessage(clockworkHook.From, $"200 {result}");
+                    }
+                }
+            }
+            catch (BadRequestException)
+            {
+                // On bad request, send a 500 to the sender
+                await clockworkApi.SendMessage(clockworkHook.From, "400");
             }
 
             return new StatusCodeResult(200);

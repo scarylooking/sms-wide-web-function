@@ -17,16 +17,30 @@ namespace WebApi.Models
 
         public static DnsRequest FromContent(string content)
         {
-            if (content.StartsWith("0"))
+            if (content[3] != ' ')
+            {
+                throw new BadRequestException();
+            }
+
+            if (content.StartsWith("GET"))
+            {
+                return new DnsRequest
+                {
+                    RequestType = DnsRequestType.Resolve,
+                    Payload = content.Substring(4)
+                };
+            }
+
+            if (content.StartsWith("REG"))
             {
                 return new DnsRequest
                 {
                     RequestType = DnsRequestType.Register,
-                    Payload = content
+                    Payload = content.Substring(4)
                 };
             }
 
-            return null;
+            throw new BadRequestException();
         }
     }
 }
