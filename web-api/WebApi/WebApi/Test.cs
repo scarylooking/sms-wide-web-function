@@ -18,9 +18,9 @@ namespace WebApi
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            var x = ContentEncoder.Generate(
-                "This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, ",
-                "C5");
+            //var x = ContentEncoder.Generate(
+            //    "This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, This is a test, ",
+            //    "C5");
 
             ;
 
