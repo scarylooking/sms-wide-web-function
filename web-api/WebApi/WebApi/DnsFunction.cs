@@ -20,7 +20,7 @@ namespace WebApi
         {
             // 1. Instantiate dependencies
             var clockworkApi = new ClockworkApi();
-            var dnsRepository = new DomainRepository();
+            DomainRepository dnsRepository = null;// new DomainRepository();
 
             // 2. Get the request model
             var clockworkHook = ClockworkHookRequest.FromQueryString(req.Query);
